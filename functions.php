@@ -122,12 +122,3 @@ add_filter( 'auth_redirect_scheme', function ( $scheme ) {
 
   sapi_redir404();
 }, 9999 );
-
-
-// add_filter( 'wp_redirect_admin_locations', '__return_false' );
-
-// add_action( 'after_setup_theme', function () {
-//   $safe_slug = home_url( $path = 'masterpanel', $scheme = 'relative' );
-
-//   var_dump( strpos($_SERVER['REQUEST_URI'], $safe_slug) );
-// });

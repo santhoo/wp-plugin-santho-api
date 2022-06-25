@@ -20,7 +20,7 @@ define( 'SAPI_PATH', plugin_dir_path( __FILE__ ) );
 // Define o novo caminho para login
 define( 'SAPI_CUSTOM_LOGIN', array(
   'slug'  => 'masterpanel',
-  'key'   => 'safe',
+  'key'   => 'sapisafetoken',
 ));
 
 define( 'SAPI_LOGOUT_URL', 'https://www.proft.sale/' );
@@ -29,21 +29,9 @@ define( 'SAPI_LOGOUT_URL', 'https://www.proft.sale/' );
 // Carrega as funções do plugin
 require SAPI_PATH . 'functions.php';
 
-/**
- * Carrega os arquivos com as funções específicas
- */
+// Define páginas e configurações do plugin no painel
+require SAPI_PATH . 'admin-page.php';
 
-// Yoast SEO
-// add_filter( 'disable_wpseo_json_ld_search', '__return_true' );
-// add_filter(
-// 	'wpseo_frontend_presenter_classes'
-// 	, function($filter) {
-// 			return array_diff($filter, [
-// 					'Yoast\WP\SEO\Presenters\Open_Graph\Article_Published_Time_Presenter',
-// 					'Yoast\WP\SEO\Presenters\Open_Graph\Article_Modified_Time_Presenter',
-// 			]);
-// 	}
-// );
 
 // Remove tags do Wordpress do header
 require SAPI_PATH . 'inc/wordpress-head.php';
