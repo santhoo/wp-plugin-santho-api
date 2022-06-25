@@ -37,7 +37,6 @@ add_action( 'admin_init', function () {
   );
 
   // Campo opção - Login slug
-
   $ct_login = sapi_get_custom_login();
   $login_url = get_home_url('', $ct_login['slug']);
   add_settings_field(
@@ -69,6 +68,24 @@ add_action( 'admin_init', function () {
       'default'     => get_home_url(),
       'sanitize'    => 'esc_url',
       'description' => __( 'URL destino para redirecionamento quando o usuário fizer logout.' )
+    )
+  );
+
+  // Campo opção - Prefixo API
+  $api_prefix = sapi_setting('sapi_api_prefix', SAPI_API_PREFIX);
+  $api_url = get_rest_url();
+  add_settings_field(
+    'sapi_api_prefix',
+    __( 'Endpoint para API' ),
+    'sapi_render_text_field',
+    'sapi-fields',
+    'sapi-plugin-section',
+    array(
+      'st_group'    => $df_group,
+      'label_for'   => 'sapi_api_prefix',
+      'default'     => $api_prefix,
+      'sanitize'    => 'sanitize_title',
+      'description' => __( 'Rest API URL: <a target="_blank" href="' . $api_url . '">' . $api_url . '</a>' )
     )
   );
 });

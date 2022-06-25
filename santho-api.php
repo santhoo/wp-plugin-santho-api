@@ -25,6 +25,8 @@ define( 'SAPI_CUSTOM_LOGIN', array(
 
 define( 'SAPI_SET_GROUP', 'sapi_settings' );
 
+define( 'SAPI_API_PREFIX', 'go' );
+
 
 // Carrega as funções do plugin
 require SAPI_PATH . 'functions.php';

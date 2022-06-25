@@ -27,15 +27,22 @@ function sapi_redir404() {
 }
 
 
-// Retorna valor de settings do grupo
-function sapi_setting( $setting ) {
+// Retorna valor de settings do grupo, ou padrão
+function sapi_setting( $setting, $default = null ) {
   $group = get_option(SAPI_SET_GROUP);
   
   if ( isset($group[$setting]) && !empty($group[$setting]) ) {
+    // Retorna setting
     return $group[$setting];
   }
   else {
-    return false;
+    if ( !empty($default) ) {
+      // Setting não existe, retorna padrão
+      return $default;
+    }
+    else {
+      return false;
+    }
   }
 }
 
@@ -43,20 +50,14 @@ function sapi_setting( $setting ) {
 // Retorna slug para página de login escondida
 function sapi_get_custom_login() {
   $df_cl = SAPI_CUSTOM_LOGIN;
-  $login_slug = sapi_setting('sapi_login_slug');
-
-  if ( $login_slug ) {
-    $slug = sanitize_title($login_slug);
-  }
-  else {
-    $slug = $df_cl['slug'];
-  }
+  $slug = sapi_setting('sapi_login_slug', $df_cl['slug']);
 
   return array(
-    'slug' => $slug,
+    'slug' => sanitize_title($slug),
     'key'  => $df_cl['key'],
   );
 }
+
 
 // Bloqueia todo o acesso ao site
 // Libera tela de login
@@ -73,7 +74,7 @@ add_action( 'after_setup_theme', function () {
     return;
 
   sapi_redir404();
-}, 10);
+}, 10 );
 
 
 // Cria novo caminho para login usando query secreta
@@ -97,7 +98,7 @@ add_action( 'after_setup_theme', function () {
     wp_redirect( $destiny );
     exit();
   }
-}, 9);
+}, 9 );
 
 
 // Define nova URL para 'Esqueci minha senha'
@@ -124,11 +125,11 @@ add_filter( 'login_url', function ( $login_url, $redirect, $force_reauth ) {
   ));
 
   if ( ! empty( $redirect ) ) {
-      $login_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
+    $login_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
   }
 
   if ( $force_reauth ) {
-      $login_url = add_query_arg( 'reauth', '1', $login_url );
+    $login_url = add_query_arg( 'reauth', '1', $login_url );
   }
 
   return $login_url;
@@ -137,11 +138,9 @@ add_filter( 'login_url', function ( $login_url, $redirect, $force_reauth ) {
 
 // Redireciona para o site após o logout
 add_action( 'wp_logout', function () {
-  $setting_ur_logout = sapi_setting('sapi_logout_redir');
+  $ur_logout = sapi_setting('sapi_logout_redir', get_home_url());
 
-  $url = (!isset($setting_ur_logout) || empty($setting_ur_logout) ? get_home_url() : $setting_ur_logout );
-
-  wp_redirect( esc_url($url) );
+  wp_redirect( esc_url($ur_logout) );
   exit();
 });
 
@@ -158,3 +157,11 @@ add_filter( 'auth_redirect_scheme', function ( $scheme ) {
 
   sapi_redir404();
 }, 9999 );
+
+
+// Muda o prefixo do endpoint da API Rest
+add_filter( 'rest_url_prefix', function () {
+  $api_prefix = sapi_setting('sapi_api_prefix', SAPI_API_PREFIX);
+
+	return sanitize_title($api_prefix);
+}, 999 );
