@@ -38,13 +38,8 @@ add_action( 'admin_init', function () {
 
   // Campo opção - Login slug
 
-  $df_cl = SAPI_CUSTOM_LOGIN;
-  $option_slug = sapi_setting('sapi_login_slug');
-  $login_url = get_home_url('', (
-    ( !isset($option_slug) || empty($option_slug) )
-    ? $df_cl['slug']
-    : sanitize_title($option_slug) )
-  );
+  $ct_login = sapi_get_custom_login();
+  $login_url = get_home_url('', $ct_login['slug']);
   add_settings_field(
     'sapi_login_slug',
     __( 'Novo caminho URL de login' ),
@@ -54,7 +49,8 @@ add_action( 'admin_init', function () {
     array(
       'st_group'    => $df_group,
       'label_for'   => 'sapi_login_slug',
-      'default'     => $df_cl['slug'],
+      'default'     => $ct_login['slug'],
+      'sanitize'    => 'sanitize_title',
       'description' => __( 'Login: <a target="_blank" href="' . $login_url . '">' . $login_url . '</a>' )
     )
   );
@@ -71,6 +67,7 @@ add_action( 'admin_init', function () {
       'label_for'   => 'sapi_logout_redir',
       'type'        => 'url',
       'default'     => get_home_url(),
+      'sanitize'    => 'esc_url',
       'description' => __( 'URL destino para redirecionamento quando o usuário fizer logout.' )
     )
   );
@@ -90,6 +87,7 @@ function sapi_render_text_field( $args ) {
   $type = ( isset($args['type']) ? $args['type'] : 'text' );
   $description = $args['description'];
 
+  
   if ( !isset($options[$name]) || empty($options[$name]) ) {
     if ( isset($args['default']) ) {
       $value = $args['default'];
@@ -100,6 +98,11 @@ function sapi_render_text_field( $args ) {
   }
   else {
     $value = $options[$name];
+  }
+
+  if ( isset($args['sanitize']) && !empty($value) ) {
+    $sanitize = $args['sanitize'];
+    $value = $sanitize($value);
   }
 
 
