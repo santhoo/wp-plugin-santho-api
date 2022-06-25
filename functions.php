@@ -110,7 +110,7 @@ add_action( 'init', function () {
   remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
 });
 
-add_filter( 'auth_redirect_scheme', function () {
+add_filter( 'auth_redirect_scheme', function ( $scheme ) {
   if ( $user_id = wp_validate_auth_cookie( '',  $scheme) ) {
     return $scheme;
   }
