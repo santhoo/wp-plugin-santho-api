@@ -1,4 +1,12 @@
 <?php
+/**
+ * Remove endpoints e tags do Wordpress do <head>
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 
 add_action( 'after_setup_theme', function () {
   // Remove  tranqueiras WP
@@ -14,7 +22,7 @@ add_action( 'after_setup_theme', function () {
   remove_action('wp_head', 'wp_oembed_add_discovery_links');
   remove_action('template_redirect', 'rest_output_link_header', 11 );
 
-  add_filter('the_generator', '__return_false');
+  add_filter( 'the_generator', '__return_false' );
 
   remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
   remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );

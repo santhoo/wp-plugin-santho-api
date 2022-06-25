@@ -23,7 +23,7 @@ define( 'SAPI_CUSTOM_LOGIN', array(
   'key'   => 'safe',
 ));
 
-define( 'SAPI_LOGOUT_URL', '//www.proft.sale/' );
+define( 'SAPI_LOGOUT_URL', 'https://www.proft.sale/' );
 
 
 // Carrega as funções do plugin
@@ -47,9 +47,6 @@ require SAPI_PATH . 'functions.php';
 
 // Remove tags do Wordpress do header
 require SAPI_PATH . 'inc/wordpress-head.php';
-
-// Desabilita comentários 
-require SAPI_PATH . 'inc/disable-comments.php';
 
 // Desabilita feeds RSS
 require SAPI_PATH . 'inc/disable-rss.php';

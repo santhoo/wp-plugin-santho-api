@@ -1,4 +1,12 @@
 <?php
+/**
+ * Remove indicações do WP-Embed das páginas
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 
 // Desabilita WP Embed
 add_action( 'wp_footer', function () {

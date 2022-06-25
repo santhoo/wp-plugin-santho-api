@@ -1,4 +1,12 @@
 <?php
+/**
+ * Remove estilos globais do Wordpress das páginas
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 
 // Remove estilos globais do Wordpress
 add_action( 'wp_enqueue_scripts', function () {

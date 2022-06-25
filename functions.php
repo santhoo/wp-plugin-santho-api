@@ -3,6 +3,11 @@
  * Funções para o plugin de API
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+
 // Carrega template para página 404
 add_filter( '404_template', function () {
   return SAPI_PATH . 'templates/404.php';
