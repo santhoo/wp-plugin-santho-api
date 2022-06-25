@@ -70,6 +70,7 @@ add_action( 'admin_init', function () {
       'st_group'    => $df_group,
       'label_for'   => 'sapi_logout_redir',
       'type'        => 'url',
+      'default'     => get_home_url(),
       'description' => __( 'URL destino para redirecionamento quando o usuário fizer logout.' )
     )
   );
@@ -86,7 +87,7 @@ function sapi_render_text_field( $args ) {
   $options = get_option( $group );
 
   $name = $args['label_for'];
-  $type = (isset($args['type']) ? $args['type'] : 'text');
+  $type = ( isset($args['type']) ? $args['type'] : 'text' );
   $description = $args['description'];
 
   if ( !isset($options[$name]) || empty($options[$name]) ) {
