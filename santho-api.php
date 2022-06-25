@@ -23,7 +23,7 @@ define( 'SAPI_CUSTOM_LOGIN', array(
   'key'   => 'sapisafetoken',
 ));
 
-define( 'SAPI_LOGOUT_URL', 'https://www.proft.sale/' );
+define( 'SAPI_SET_GROUP', 'sapi_settings' );
 
 
 // Carrega as funções do plugin

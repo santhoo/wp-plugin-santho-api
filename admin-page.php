@@ -22,68 +22,96 @@ add_action( 'admin_menu', function() {
 
 
 add_action( 'admin_init', function () {
+
+  $df_group = SAPI_SET_GROUP;
+
   // Registra grupo de opções
-  register_setting( 'sapi-fields', 'sapi_settings' );
+  register_setting( 'sapi-fields', $df_group );
 
   // Adiciona seção de campos de opções
   add_settings_section(
     'sapi-plugin-section', 
-    'Santho API',
+    __( 'Santho API' ),
     'sapi_settings_section_callback',
     'sapi-fields'
   );
 
   // Campo opção - Login slug
+
+  $df_cl = SAPI_CUSTOM_LOGIN;
+  $option_slug = sapi_setting('sapi_login_slug');
+  $login_url = get_home_url('', (
+    ( !isset($option_slug) || empty($option_slug) )
+    ? $df_cl['slug']
+    : sanitize_title($option_slug) )
+  );
   add_settings_field(
     'sapi_login_slug',
-    'Novo caminho URL de login',
-    'sapi_login_slug_cb',
+    __( 'Novo caminho URL de login' ),
+    'sapi_render_text_field',
     'sapi-fields',
     'sapi-plugin-section',
+    array(
+      'st_group'    => $df_group,
+      'label_for'   => 'sapi_login_slug',
+      'default'     => $df_cl['slug'],
+      'description' => __( 'Login: <a target="_blank" href="' . $login_url . '">' . $login_url . '</a>' )
+    )
   );
 
   // Campo opção - Redirecionamento após logout
   add_settings_field(
     'sapi_logout_redir',
-    'Redirecionamento no logout',
-    'sapi_logout_redir_cb',
+    __( 'Redirecionamento no logout' ),
+    'sapi_render_text_field',
     'sapi-fields',
     'sapi-plugin-section',
+    array(
+      'st_group'    => $df_group,
+      'label_for'   => 'sapi_logout_redir',
+      'type'        => 'url',
+      'description' => __( 'URL destino para redirecionamento quando o usuário fizer logout.' )
+    )
   );
 });
 
 
 function sapi_settings_section_callback() {
-  echo 'Wordpress API Reset Plugin - Defina as opções básicas para o Santho API';
+  echo __( '<h4 style="margin-bottom:0">Wordpress API Reset Plugin</h4>' );
+  echo __ ( 'Defina as opções básicas para Santho API:' );
 }
 
-function sapi_login_slug_cb() {
-  $defaults = SAPI_CUSTOM_LOGIN;
-  $group = 'sapi_settings';
+function sapi_render_text_field( $args ) {
+  $group = $args['st_group'];
   $options = get_option( $group );
-  $name = 'sapi_login_slug';
-  $value = (!isset($options[$name]) || empty($options[$name]) ) ? $defaults['slug'] : $options[$name];
 
-  $html = '<input type="text"';
+  $name = $args['label_for'];
+  $type = (isset($args['type']) ? $args['type'] : 'text');
+  $description = $args['description'];
+
+  if ( !isset($options[$name]) || empty($options[$name]) ) {
+    if ( isset($args['default']) ) {
+      $value = $args['default'];
+    }
+    else {
+      $value = null;
+    }
+  }
+  else {
+    $value = $options[$name];
+  }
+
+
+  $html = '<input type="' . $type . '"';
   $html .= ' name="' . $group . '['. $name .']"';
+  $html .= ' id="' . $name .'"';
   $html .= ' value="' . $value . '"';
   $html .= ' class="regular-text"';
   $html .= '>';
 
-  echo $html;
-}
-
-function sapi_logout_redir_cb() {
-  $group = 'sapi_settings';
-  $options = get_option( $group );
-  $name = 'sapi_login_redir';
-  $value = (!isset($options[$name]) || empty($options[$name]) ) ? null : $options[$name];
-
-  $html = '<input type="url"';
-  $html .= ' name="' . $group . '['. $name .']"';
-  $html .= ' value="' . $value . '"';
-  $html .= ' class="regular-text"';
-  $html .= '>';
+  if ( isset($description) ) {
+    $html .= '<p class="description">' . $description .'</p>';
+  }
 
   echo $html;
 }
