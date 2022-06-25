@@ -105,9 +105,19 @@ add_action( 'wp_logout', function () {
 });
 
 
-add_action( 'after_setup_theme', function () {
-  add_filter( 'wp_redirect_admin_locations', '__return_false' );
+// Evita o redirecionamento para a 'login url' no caminho /wp-admin
+add_action( 'init', function () {
+  remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
 });
+
+add_filter( 'auth_redirect_scheme', function () {
+  if ( $user_id = wp_validate_auth_cookie( '',  $scheme) ) {
+    return $scheme;
+  }
+
+  sapi_redir404();
+}, 9999 );
+
 
 // add_filter( 'wp_redirect_admin_locations', '__return_false' );
 
