@@ -63,6 +63,7 @@ function sapi_get_custom_login() {
 add_filter( 'rest_request_before_callbacks', function ( $response, $handler, WP_REST_Request $request ) {
 
   if ( is_user_logged_in() ) {
+    // Libera o response para usuários logados (painel web)
     return $response;
   }
 
