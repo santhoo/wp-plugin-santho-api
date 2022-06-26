@@ -59,6 +59,44 @@ function sapi_get_custom_login() {
 }
 
 
+// Verifica autenticação na hora do response nos endpoints da APi
+add_filter( 'rest_request_before_callbacks', function ( $response, $handler, WP_REST_Request $request ) {
+
+  if ( !$request->get_header('authorization') || !isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ) {
+    // Não tem Auth no header
+    // Não tem user ou password na autenticação
+    sapi_redir404();
+  }
+
+  if ( is_multisite() ) {
+    // Se for Multisite, verifica se o usuário está no site do endpoint
+    $blog_id = get_current_blog_id();
+    $user_id = username_exists( sanitize_text_field( $_SERVER['PHP_AUTH_USER'] ) );
+  
+    if ( $user_id && !is_user_member_of_blog( $user_id, $blog_id ) ) {
+      // Usuário existe
+      // Mas não é desse site (multisite)
+      sapi_redir404();
+    }
+  }
+
+  return $response;
+}, 10, 3 );
+
+
+// Considera erros de autenticação nos endpoints da Rest API
+add_filter( 'rest_authentication_errors', function ( $error ) {
+	// Passthrough other errors
+	if ( !empty($error) ) {
+		return $error;
+	}
+
+	global $wp_json_basic_auth_error;
+
+	return $wp_json_basic_auth_error;
+});
+
+
 // Bloqueia todo o acesso ao site
 // Libera tela de login
 add_action( 'after_setup_theme', function () {
@@ -68,8 +106,9 @@ add_action( 'after_setup_theme', function () {
   if (
   is_admin() ||
   is_user_logged_in() ||
-  ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST[$login['key']] ) && $_REQUEST[$login['key']] === $login['slug'] ) ||
-  ( $GLOBALS['pagenow'] === 'wp-login.php' && !empty( $_POST ) )
+  ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST[$login['key']] ) && $_REQUEST[$login['key']] === $login['slug'] ) || // Login form
+  ( $GLOBALS['pagenow'] === 'wp-login.php' && !empty( $_POST ) ) || // Login lost password sent
+  ( isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) ) // Rest API
   )
     return;
 
