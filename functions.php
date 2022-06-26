@@ -62,6 +62,10 @@ function sapi_get_custom_login() {
 // Verifica autenticação na hora do response nos endpoints da APi
 add_filter( 'rest_request_before_callbacks', function ( $response, $handler, WP_REST_Request $request ) {
 
+  if ( is_user_logged_in() ) {
+    return $response;
+  }
+
   if ( !$request->get_header('authorization') || !isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ) {
     // Não tem Auth no header
     // Não tem user ou password na autenticação
