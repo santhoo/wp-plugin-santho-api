@@ -128,19 +128,16 @@ add_action( 'after_setup_theme', function () {
       if ( isset($_REQUEST['action']) && ($_REQUEST['action'] === 'rp' || $_REQUEST['action'] === 'lostpassword') )
         // Link de ativação por e-mail
         return;
-      
+
+      if ( isset($_REQUEST['checkemail']) && $_REQUEST['checkemail'] === 'confirm' )
+        // Recuperar senha depois do link de ativação
+        return;
     }
     elseif ( isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) ) {
       // Rest API
       return;
     }
   }
-  // ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST[$login['key']] ) && $_REQUEST[$login['key']] === $login['slug'] ) || // Login form
-  // ( $GLOBALS['pagenow'] === 'wp-login.php' && !empty( $_POST ) ) || // Login lost password sent
-  // ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST['key'] ) && isset( $_REQUEST['action'] ) === 'rp' && isset( $_REQUEST['login'] ) ) || 
-  // (  ) 
-  // )
-    // return;
 
   sapi_redir404();
 }, 10 );
