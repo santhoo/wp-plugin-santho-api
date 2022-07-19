@@ -113,6 +113,7 @@ add_action( 'after_setup_theme', function () {
   is_user_logged_in() ||
   ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST[$login['key']] ) && $_REQUEST[$login['key']] === $login['slug'] ) || // Login form
   ( $GLOBALS['pagenow'] === 'wp-login.php' && !empty( $_POST ) ) || // Login lost password sent
+  ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST['key'] ) && isset( $_REQUEST['action'] ) === 'rp' && isset( $_REQUEST['login'] ) ) || // Link de ativação por e-mail
   ( isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) ) // Rest API
   )
     return;
