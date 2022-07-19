@@ -108,15 +108,39 @@ add_action( 'after_setup_theme', function () {
   
   $login = sapi_get_custom_login();
 
-  if (
-  is_admin() ||
-  is_user_logged_in() ||
-  ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST[$login['key']] ) && $_REQUEST[$login['key']] === $login['slug'] ) || // Login form
-  ( $GLOBALS['pagenow'] === 'wp-login.php' && !empty( $_POST ) ) || // Login lost password sent
-  ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST['key'] ) && isset( $_REQUEST['action'] ) === 'rp' && isset( $_REQUEST['login'] ) ) || // Link de ativação por e-mail
-  ( isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) ) // Rest API
-  )
+  // var_dump($_REQUEST['login']);
+  // exit();
+
+  if ( is_admin() || is_user_logged_in() ) {
+    // Páginas do painel ou usuário logado
     return;
+  }
+  else {
+    if ( $GLOBALS['pagenow'] === 'wp-login.php' ) {
+      if ( !empty( $_POST ) )
+        // Login lost password sent
+        return;
+
+      if ( isset($_REQUEST[$login['key']]) && $_REQUEST[$login['key']] === $login['slug'] )
+        // Login form
+        return;
+
+      if ( isset($_REQUEST['action']) && ($_REQUEST['action'] === 'rp' || $_REQUEST['action'] === 'lostpassword') )
+        // Link de ativação por e-mail
+        return;
+      
+    }
+    elseif ( isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) ) {
+      // Rest API
+      return;
+    }
+  }
+  // ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST[$login['key']] ) && $_REQUEST[$login['key']] === $login['slug'] ) || // Login form
+  // ( $GLOBALS['pagenow'] === 'wp-login.php' && !empty( $_POST ) ) || // Login lost password sent
+  // ( $GLOBALS['pagenow'] === 'wp-login.php' && isset( $_REQUEST['key'] ) && isset( $_REQUEST['action'] ) === 'rp' && isset( $_REQUEST['login'] ) ) || 
+  // (  ) 
+  // )
+    // return;
 
   sapi_redir404();
 }, 10 );
