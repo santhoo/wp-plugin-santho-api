@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Prefixo/namespace do Endpoint
-define('SANTHO_API_NAMESPACE', 'api/v1');
+define('SANTHO_API_NAMESPACE', 'sapi/v1');
 
 
 // Custom Endpoints
@@ -64,10 +64,13 @@ function sapi_menu($request)
 {
 
   $locations = get_nav_menu_locations();
-  $menu = wp_get_nav_menu_object($locations[$request['menu_location']]);
-  $menuitems = wp_get_nav_menu_items($menu->term_id);
 
-  if (!$locations || !$menu || !$menuitems) {
+  if (array_key_exists($request['menu_location'], $locations)) {
+    $menu = wp_get_nav_menu_object($locations[$request['menu_location']]);
+    $menuitems = wp_get_nav_menu_items($menu->term_id);
+  }
+
+  if (!$locations || !isset($menu) || !isset($menuitems)) {
     return new WP_Error('menu_not_found', 'No menu found', array('status' => 404));
   }
 
@@ -120,7 +123,7 @@ function sapi_getall($request)
   $post_prop = explode(',', $request['post_prop']);
 
   // Se o tipo de post existir e tiver campos selecionados
-  if (post_type_exists($post_type) && is_array($post_prop)) {
+  if (post_type_exists($post_type) && is_array($post_prop) && !empty($post_prop)) {
     $output = get_posts_fields([
       'post_type' => $post_type,
       'fields' => $post_prop,
